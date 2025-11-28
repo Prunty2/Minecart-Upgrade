@@ -1,0 +1,19 @@
+{
+	"required": true,
+	"package": "com.minecartupgrade.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"refmap": "minecartupgrade.refmap.json",
+	"mixins": [
+		"AbstractMinecartMixin",
+		"OldMinecartBehaviorMixin",
+		"NewMinecartBehaviorMixin",
+		"MinecartBehaviorAccessor",
+		"MinecartFurnaceMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}
