@@ -1,0 +1,12 @@
+{
+	"required": true,
+	"package": "com.minecartupgrade.mixin.client",
+	"compatibilityLevel": "JAVA_21",
+	"refmap": "minecartupgrade.refmap.json",
+	"client": [
+		"ExampleClientMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

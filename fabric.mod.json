@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "minecartupgrade",
+	"version": "1.1.0",
+	"name": "Minecart Upgrade",
+	"description": "Tweaks minecart physics, raising their maximum rail speed.",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "MIT",
+	"icon": "assets/minecartupgrade/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.minecartupgrade.MinecartUpgradeMod"
+		],
+		"client": [
+			"com.minecartupgrade.MinecartUpgradeClient"
+		]
+	},
+	"mixins": [
+		"minecartupgrade.mixins.json",
+		{
+			"config": "minecartupgrade.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.17.3",
+		"minecraft": "~1.21.10",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}

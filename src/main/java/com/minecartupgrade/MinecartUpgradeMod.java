@@ -1,6 +1,7 @@
 package com.minecartupgrade;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,11 @@ public class MinecartUpgradeMod implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		MinecartUpgradeGameRules.init();
+
+		ServerLifecycleEvents.SERVER_STARTING.register(server -> MinecartUpgradeConfigManager.load());
+		ServerLifecycleEvents.SERVER_STARTED.register(server -> MinecartUpgradeConfigManager.syncRuleFromConfig(server));
+		ServerLifecycleEvents.SERVER_STOPPED.register(server -> MinecartUpgradeConfigManager.save());
 		LOGGER.info("Minecart Upgrade initialized");
 	}
 }
