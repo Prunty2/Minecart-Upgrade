@@ -4,8 +4,8 @@ Minecart Upgrade is a Fabric mod for Minecraft 1.21.10 that raises the maximum s
 
 ## Configure
 
-- Gamerule: `minecartMaxSpeed` (double, blocks per second, default 12). Change it with `/gamerule minecartMaxSpeed 18.5` and the config file will update immediately.
-- Config file: `config/minecartupgrade.json` with a single field `maxBlocksPerSecond`. Editing this before launching a world will push the value into the gamerule when the server starts.
+- Gamerule: `minecartMaxSpeed` (measured in blocks per second, default 12). Change it with e.g. `/gamerule minecartMaxSpeed 18.5` and the config file and all minecarts will update immediately.
+- Config file: `config/minecartupgrade.json` has a single field `maxBlocksPerSecond`. Editing this before launching a world will push the value into the gamerule and all minecarts when the server starts.
 
 ## Install
 
