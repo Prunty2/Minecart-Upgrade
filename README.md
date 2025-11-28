@@ -5,3 +5,7 @@ Minecart Revamp is a Fabric mod for Minecraft 1.21.10 that raises the maximum sp
 # Install
 
 The mod runs like any Fabric mod, just download and pop it in your mods folder.
+
+# Version
+
+The mod is made for v1.21.10, with plans to support other popular versions soon on Modrinth
