@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "minecartrevamp",
+	"version": "1.0.0",
+	"name": "Minecart Revamp",
+	"description": "Tweaks minecart physics, raising their maximum rail speed.",
+	"authors": [
+		"Me!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "MIT",
+	"icon": "assets/minecartrevamp/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"com.minecartrevamp.MinecartRevampMod"
+		],
+		"client": [
+			"com.minecartrevamp.MinecartRevampClient"
+		]
+	},
+	"mixins": [
+		"minecartrevamp.mixins.json",
+		{
+			"config": "minecartrevamp.client.mixins.json",
+			"environment": "client"
+		}
+	],
+	"depends": {
+		"fabricloader": ">=0.17.3",
+		"minecraft": "~1.21.10",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
