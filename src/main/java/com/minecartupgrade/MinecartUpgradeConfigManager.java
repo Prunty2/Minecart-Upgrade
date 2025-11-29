@@ -117,8 +117,7 @@ public final class MinecartUpgradeConfigManager {
 		try {
 			return gameRules.getRule(key);
 		} catch (IllegalArgumentException ignored) {
-			GameRules.Type<DoubleRule> type = (GameRules.Type<DoubleRule>) GameRulesAccessor.getRuleTypes()
-				.get(key);
+			GameRules.Type<?> type = GameRulesAccessor.getRuleTypes().get(key);
 			if (type == null || !(gameRules instanceof GameRulesInstanceAccessor accessor)) {
 				return null;
 			}
