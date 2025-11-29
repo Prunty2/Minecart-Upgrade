@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import com.minecartupgrade.mixin.GameRulesInstanceAccessor;
+import com.minecartupgrade.mixin.DoubleRuleAccessor;
 import net.fabricmc.fabric.mixin.gamerule.GameRulesAccessor;
 
 public final class MinecartUpgradeConfigManager {
@@ -78,8 +79,9 @@ public final class MinecartUpgradeConfigManager {
 			MinecartUpgradeMod.LOGGER.warn("Minecart max speed gamerule missing on server start; skipping sync.");
 			return;
 		}
-		if (rule != null && Math.abs(rule.get() - configured) > EPSILON) {
-			rule.set(configured, server);
+		if (Math.abs(rule.get() - configured) > EPSILON) {
+			DoubleRuleAccessor accessor = (DoubleRuleAccessor)(Object) rule;
+			accessor.minecartupgrade$setValue(configured);
 		}
 	}
 

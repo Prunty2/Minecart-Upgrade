@@ -3,11 +3,7 @@ package com.minecartupgrade;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
-import net.minecraft.world.entity.vehicle.MinecartBehavior;
-import net.minecraft.world.entity.vehicle.NewMinecartBehavior;
-import net.minecraft.world.entity.vehicle.OldMinecartBehavior;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -118,17 +114,17 @@ public final class MinecartRerailHelper {
 		}
 
 		RailShape shape = state.getValue(railBlock.getShapeProperty());
-		Pair<Vec3i, Vec3i> exits = AbstractMinecart.exits(shape);
-		Vec3 exitA = new Vec3(exits.getFirst()).scale(0.5);
-		Vec3 exitB = new Vec3(exits.getSecond()).scale(0.5);
-		Vec3 start = railPos.getBottomCenter().add(exitA);
-		Vec3 end = railPos.getBottomCenter().add(exitB);
+		Pair<Vec3, Vec3> exits = exitVectors(shape);
+		Vec3 exitA = exits.getFirst().scale(0.5);
+		Vec3 exitB = exits.getSecond().scale(0.5);
+		Vec3 base = Vec3.atBottomCenterOf(railPos);
+		Vec3 start = base.add(exitA);
+		Vec3 end = base.add(exitB);
 
 		Vec3 trackVec = end.subtract(start);
 		Vec3 projected = projectOntoSegment(minecart.position(), start, end);
 		minecart.setPos(projected.add(0.0, 0.1, 0.0));
 		minecart.resetFallDistance();
-		minecart.setOnRails(true);
 
 		Vec3 aligned = alignDirection(incomingMotion, exitA, exitB, trackVec);
 		double speed = Math.max(minecart.getDeltaMovement().length(), incomingMotion.length());
@@ -137,16 +133,6 @@ public final class MinecartRerailHelper {
 		}
 		if (minecart instanceof RailDirectionTracker tracker && aligned.lengthSqr() > 1.0E-6) {
 			tracker.minecartupgrade$setLastRailDirection(aligned.normalize());
-		}
-
-		MinecartBehavior behavior = minecart.getBehavior();
-		if (behavior instanceof NewMinecartBehavior newBehavior) {
-			newBehavior.adjustToRails(railPos, state, true);
-		} else if (behavior instanceof OldMinecartBehavior oldBehavior) {
-			Vec3 trackPos = oldBehavior.getPos(railPos.getX() + 0.5, railPos.getY(), railPos.getZ() + 0.5);
-			if (trackPos != null) {
-				minecart.setPos(trackPos);
-			}
 		}
 
 		return true;
@@ -196,15 +182,30 @@ public final class MinecartRerailHelper {
 		return best;
 	}
 
-	private static Vec3 normalizeOrZero(Vec3 vec3) {
-		return vec3.lengthSqr() < EPSILON ? Vec3.ZERO : vec3.normalize();
+private static Vec3 normalizeOrZero(Vec3 vec3) {
+	return vec3.lengthSqr() < EPSILON ? Vec3.ZERO : vec3.normalize();
+}
+
+	private static Pair<Vec3, Vec3> exitVectors(RailShape shape) {
+		return switch (shape) {
+			case NORTH_SOUTH -> Pair.of(new Vec3(0, 0, -1), new Vec3(0, 0, 1));
+			case EAST_WEST -> Pair.of(new Vec3(-1, 0, 0), new Vec3(1, 0, 0));
+			case ASCENDING_EAST -> Pair.of(new Vec3(-1, -1, 0), new Vec3(1, 0, 0));
+			case ASCENDING_WEST -> Pair.of(new Vec3(-1, 0, 0), new Vec3(1, -1, 0));
+			case ASCENDING_NORTH -> Pair.of(new Vec3(0, 0, -1), new Vec3(0, -1, 1));
+			case ASCENDING_SOUTH -> Pair.of(new Vec3(0, -1, -1), new Vec3(0, 0, 1));
+			case SOUTH_EAST -> Pair.of(new Vec3(0, 0, 1), new Vec3(1, 0, 0));
+			case SOUTH_WEST -> Pair.of(new Vec3(0, 0, 1), new Vec3(-1, 0, 0));
+			case NORTH_WEST -> Pair.of(new Vec3(0, 0, -1), new Vec3(-1, 0, 0));
+			case NORTH_EAST -> Pair.of(new Vec3(0, 0, -1), new Vec3(1, 0, 0));
+		};
 	}
 
-	private static int[][] buildSearchOffsets() {
-		int[] range = {-1, 0, 1};
-		int[][] offsets = new int[27][3];
-		int idx = 0;
-		for (int dx : range) {
+private static int[][] buildSearchOffsets() {
+	int[] range = {-1, 0, 1};
+	int[][] offsets = new int[27][3];
+	int idx = 0;
+	for (int dx : range) {
 			for (int dy : range) {
 				for (int dz : range) {
 					offsets[idx][0] = dx;

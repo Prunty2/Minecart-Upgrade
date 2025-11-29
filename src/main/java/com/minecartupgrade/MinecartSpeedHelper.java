@@ -53,14 +53,21 @@ public final class MinecartSpeedHelper {
 			return speed;
 		}
 
-		BlockPos railPos = minecart.getCurrentBlockPosOrRailBelow();
+		BlockPos railPos = findRailBelowOrAt(minecart.blockPosition(), minecart);
+		if (railPos == null) {
+			return speed;
+		}
+
 		BlockState state = minecart.level().getBlockState(railPos);
 		if (!(state.getBlock() instanceof BaseRailBlock baseRailBlock)) {
 			return speed;
 		}
 
 		RailShape shape = state.getValue(baseRailBlock.getShapeProperty());
-		if (shape.isSlope()) {
+		if (shape == RailShape.ASCENDING_NORTH
+			|| shape == RailShape.ASCENDING_SOUTH
+			|| shape == RailShape.ASCENDING_EAST
+			|| shape == RailShape.ASCENDING_WEST) {
 			return Math.min(speed, safeCurveLimit);
 		}
 
@@ -73,5 +80,20 @@ public final class MinecartSpeedHelper {
 
 	private static double getConfiguredMaxSpeedPerTick() {
 		return configuredBlocksPerSecond / 20.0;
+	}
+
+	@org.jetbrains.annotations.Nullable
+	private static BlockPos findRailBelowOrAt(BlockPos pos, AbstractMinecart minecart) {
+		BlockState stateAt = minecart.level().getBlockState(pos);
+		if (BaseRailBlock.isRail(stateAt)) {
+			return pos;
+		}
+
+		BlockPos below = pos.below();
+		BlockState stateBelow = minecart.level().getBlockState(below);
+		if (BaseRailBlock.isRail(stateBelow)) {
+			return below;
+		}
+		return null;
 	}
 }

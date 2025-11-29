@@ -2,8 +2,9 @@ package com.minecartupgrade.mixin;
 
 import com.minecartupgrade.FurnacePushTracker;
 import com.minecartupgrade.MinecartRerailHelper;
+import com.minecartupgrade.MinecartSpeedHelper;
 import com.minecartupgrade.RailDirectionTracker;
-import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.MinecartFurnace;
 import net.minecraft.world.phys.Vec3;
@@ -12,6 +13,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractMinecart.class)
 public abstract class AbstractMinecartMixin implements FurnacePushTracker, RailDirectionTracker {
@@ -49,19 +51,36 @@ public abstract class AbstractMinecartMixin implements FurnacePushTracker, RailD
 		}
 	}
 
-	@Inject(method = "pushOtherMinecart", at = @At("HEAD"))
-	private void minecartupgrade$recordFurnacePush(AbstractMinecart other, double d, double e, CallbackInfo ci) {
+	@Inject(method = "push", at = @At("HEAD"))
+	private void minecartupgrade$recordFurnacePushOnCollision(Entity entity, CallbackInfo ci) {
+		if (!(entity instanceof AbstractMinecart other)) {
+			return;
+		}
 		AbstractMinecart self = (AbstractMinecart)(Object)this;
-		if (other.isFurnace() && !self.isFurnace() && this.minecartupgrade$isPoweredFurnace(other)) {
+		if (other instanceof MinecartFurnace && !(self instanceof MinecartFurnace) && this.minecartupgrade$isPoweredFurnace(other)) {
 			this.minecartupgrade$markPushedByFurnace();
-		} else if (self.isFurnace() && !other.isFurnace() && this.minecartupgrade$isPoweredFurnace(self)) {
-			((FurnacePushTracker)other).minecartupgrade$markPushedByFurnace();
+		} else if (self instanceof MinecartFurnace && !(other instanceof MinecartFurnace) && this.minecartupgrade$isPoweredFurnace(self)) {
+			if (other instanceof FurnacePushTracker tracker) {
+				tracker.minecartupgrade$markPushedByFurnace();
+			}
 		}
 	}
 
 	@Unique
 	private boolean minecartupgrade$isPoweredFurnace(AbstractMinecart cart) {
-		return cart instanceof MinecartFurnace furnace && furnace.push.lengthSqr() > 1.0E-7;
+		if (cart instanceof MinecartFurnace furnace) {
+			Vec3 delta = furnace.getDeltaMovement();
+			double magnitude = delta.x * delta.x + delta.z * delta.z;
+			return magnitude > 1.0E-7;
+		}
+		return false;
+	}
+
+	@Inject(method = "getMaxSpeed", at = @At("HEAD"), cancellable = true)
+	private void minecartupgrade$raiseMaxSpeed(CallbackInfoReturnable<Double> cir) {
+		AbstractMinecart self = (AbstractMinecart)(Object)this;
+		boolean boostedByFurnace = self instanceof FurnacePushTracker tracker && tracker.minecartupgrade$isPushedByFurnace();
+		cir.setReturnValue(MinecartSpeedHelper.computeMaxSpeed(self, boostedByFurnace));
 	}
 
 	@Override
@@ -85,7 +104,7 @@ public abstract class AbstractMinecartMixin implements FurnacePushTracker, RailD
 	}
 
 	@Inject(method = "comeOffTrack", at = @At("HEAD"), cancellable = true)
-	private void minecartupgrade$keepOnRails(ServerLevel serverLevel, CallbackInfo ci) {
+	private void minecartupgrade$keepOnRails(CallbackInfo ci) {
 		if (MinecartRerailHelper.rerailIfSafe((AbstractMinecart)(Object)this)) {
 			ci.cancel();
 		}
