@@ -80,8 +80,9 @@ public final class MinecartUpgradeConfigManager {
 			return;
 		}
 		if (Math.abs(rule.get() - configured) > EPSILON) {
-			DoubleRuleAccessor accessor = (DoubleRuleAccessor)(Object) rule;
-			accessor.minecartupgrade$setValue(configured);
+			DoubleRule copy = ((DoubleRuleAccessor)(Object) rule).minecartupgrade$copy();
+			((DoubleRuleAccessor)(Object) copy).minecartupgrade$setValue(configured);
+			rule.setValue(copy, server);
 		}
 	}
 

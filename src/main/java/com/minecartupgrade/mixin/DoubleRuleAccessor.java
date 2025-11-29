@@ -6,6 +6,9 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(DoubleRule.class)
 public interface DoubleRuleAccessor {
-	@Accessor(value = "value", remap = false)
+	@Accessor("value")
 	void minecartupgrade$setValue(double value);
+
+	@org.spongepowered.asm.mixin.gen.Invoker("copy")
+	DoubleRule minecartupgrade$copy();
 }

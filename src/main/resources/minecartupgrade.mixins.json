@@ -1,7 +1,7 @@
 {
 	"required": true,
 	"package": "com.minecartupgrade.mixin",
-	"compatibilityLevel": "JAVA_17",
+	"compatibilityLevel": "JAVA_21",
 	"refmap": "minecartupgrade-refmap.json",
 	"mixins": [
 		"AbstractMinecartMixin",
