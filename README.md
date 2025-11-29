@@ -13,4 +13,5 @@ The mod runs like any Fabric mod, just download and pop it in your mods folder.
 
 ## Version
 
-The mod is made for v1.21.10, with plans to support other popular versions soon on Modrinth.
+The mod is made for v1.21.10, and has backwards compatibility for 1.20.1 and 1.21.1 found on Modrinth.
+https://modrinth.com/mod/minecart-upgrade
