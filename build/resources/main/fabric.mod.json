@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "minecartupgrade",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"name": "Minecart Upgrade",
 	"description": "Tweaks minecart physics, raising their maximum rail speed.",
 	"authors": [

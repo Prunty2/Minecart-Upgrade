@@ -9,7 +9,7 @@ import net.minecraft.world.level.block.state.properties.RailShape;
 public final class MinecartSpeedHelper {
 	public static final double DEFAULT_BLOCKS_PER_SECOND = 12.0;
 	public static final double MIN_BLOCKS_PER_SECOND = 0.1;
-	private static final double SAFE_CURVE_LIMIT_BLOCKS_PER_SECOND = 25.0; // don't clamp curves/slopes until 25 bps
+	private static final double SAFE_CURVE_LIMIT_BLOCKS_PER_SECOND = 10.0; // don't clamp curves/slopes until 10 bps
 	private static final double WATER_MULTIPLIER = 0.5;
 	private static volatile double configuredBlocksPerSecond = DEFAULT_BLOCKS_PER_SECOND;
 
