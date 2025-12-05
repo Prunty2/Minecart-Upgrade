@@ -114,11 +114,23 @@ public final class MinecartUpgradeConfigManager {
 			return null;
 		}
 
+		if (!(gameRules instanceof GameRulesInstanceAccessor accessor)) {
+			return null;
+		}
+
 		try {
-			return gameRules.getRule(key);
-		} catch (IllegalArgumentException ignored) {
+			GameRules.Value<?> existingValue = accessor.minecartupgrade$getRules().get(key);
+			if (existingValue instanceof DoubleRule doubleRule) {
+				return doubleRule;
+			}
+
+			// If it's not a DoubleRule (e.g., IntegerValue from old world data), replace it
+			if (existingValue != null) {
+				MinecartUpgradeMod.LOGGER.info("Replacing incompatible gamerule type {} with DoubleRule", existingValue.getClass().getSimpleName());
+			}
+
 			GameRules.Type<?> type = GameRulesAccessor.getRuleTypes().get(key);
-			if (type == null || !(gameRules instanceof GameRulesInstanceAccessor accessor)) {
+			if (type == null) {
 				return null;
 			}
 
@@ -130,6 +142,9 @@ public final class MinecartUpgradeConfigManager {
 
 			accessor.minecartupgrade$getRules().put(key, created);
 			return created;
+		} catch (Exception e) {
+			MinecartUpgradeMod.LOGGER.error("Failed to get or create gamerule {}", key, e);
+			return null;
 		}
 	}
 }
