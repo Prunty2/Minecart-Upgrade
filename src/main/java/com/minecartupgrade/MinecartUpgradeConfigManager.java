@@ -14,6 +14,7 @@ import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import com.minecartupgrade.mixin.DoubleRuleAccessor;
 import com.minecartupgrade.mixin.GameRulesInstanceAccessor;
 import net.fabricmc.fabric.mixin.gamerule.GameRulesAccessor;
 
@@ -79,7 +80,11 @@ public final class MinecartUpgradeConfigManager {
 			return;
 		}
 		if (rule != null && Math.abs(rule.get() - configured) > EPSILON) {
-			rule.set(configured, server);
+			// Use validate() for compatibility with older Fabric API versions
+			// that don't have DoubleRule.set(double, MinecraftServer)
+			if (rule.validate(Double.toString(configured))) {
+				((DoubleRuleAccessor) (GameRules.Value<?>) rule).minecartupgrade$invokeOnChanged(server);
+			}
 		}
 	}
 
@@ -115,8 +120,16 @@ public final class MinecartUpgradeConfigManager {
 		}
 
 		try {
-			return gameRules.getRule(key);
+			GameRules.Value<?> rawRule = gameRules.getRule(key);
+			if (rawRule instanceof DoubleRule doubleRule) {
+				return doubleRule;
+			}
+			// Rule exists but is wrong type - this can happen if another mod registered a conflicting rule
+			MinecartUpgradeMod.LOGGER.warn("GameRule {} has unexpected type {}, expected DoubleRule", 
+				key, rawRule != null ? rawRule.getClass().getSimpleName() : "null");
+			return null;
 		} catch (IllegalArgumentException ignored) {
+			// Rule not found in this GameRules instance, try to create it
 			GameRules.Type<?> type = GameRulesAccessor.getRuleTypes().get(key);
 			if (type == null || !(gameRules instanceof GameRulesInstanceAccessor accessor)) {
 				return null;
@@ -130,6 +143,10 @@ public final class MinecartUpgradeConfigManager {
 
 			accessor.minecartupgrade$getRules().put(key, created);
 			return created;
+		} catch (ClassCastException e) {
+			// This happens when the gamerule was registered by vanilla/another mod with a different type
+			MinecartUpgradeMod.LOGGER.warn("GameRule {} type mismatch - cannot cast to DoubleRule. Another mod may have registered a conflicting rule.", key);
+			return null;
 		}
 	}
 }

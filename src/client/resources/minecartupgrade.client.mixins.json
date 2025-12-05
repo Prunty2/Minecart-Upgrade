@@ -3,9 +3,7 @@
 	"package": "com.minecartupgrade.mixin.client",
 	"compatibilityLevel": "JAVA_21",
 	"refmap": "client-minecartupgrade-refmap.json",
-	"client": [
-		"ExampleClientMixin"
-	],
+	"client": [],
 	"injectors": {
 		"defaultRequire": 1
 	}

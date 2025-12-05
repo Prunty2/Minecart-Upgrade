@@ -37,23 +37,36 @@ public final class MinecartUpgradeGameRules {
 		return RULE_NAME;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static GameRules.Key<DoubleRule> resolveKey() {
-		if (MINECART_MAX_SPEED != null) {
-			return MINECART_MAX_SPEED;
-		}
+@SuppressWarnings("unchecked")
+    public static GameRules.Key<DoubleRule> resolveKey() {
+        if (MINECART_MAX_SPEED != null) {
+            return MINECART_MAX_SPEED;
+        }
 
-		for (GameRules.Key<?> key : GameRulesAccessor.getRuleTypes().keySet()) {
-			if (key.toString().equals(RULE_NAME)) {
-				MINECART_MAX_SPEED = (GameRules.Key<DoubleRule>) key;
-				return MINECART_MAX_SPEED;
-			}
-		}
+        for (GameRules.Key<?> key : GameRulesAccessor.getRuleTypes().keySet()) {
+            if (key.toString().equals(RULE_NAME)) {
+                // Verify the type is actually a DoubleRule before casting
+                GameRules.Type<?> type = GameRulesAccessor.getRuleTypes().get(key);
+                if (type != null) {
+                    try {
+                        GameRules.Value<?> sample = type.createRule();
+                        if (sample instanceof DoubleRule) {
+                            MINECART_MAX_SPEED = (GameRules.Key<DoubleRule>) key;
+                            return MINECART_MAX_SPEED;
+                        } else {
+                            MinecartUpgradeMod.LOGGER.warn("GameRule {} exists but is not a DoubleRule (got {}), skipping", RULE_NAME, sample.getClass().getSimpleName());
+                            return null;
+                        }
+                    } catch (Exception e) {
+                        MinecartUpgradeMod.LOGGER.warn("Failed to verify type of GameRule {}", RULE_NAME, e);
+                        return null;
+                    }
+                }
+            }
+        }
 
-		return null;
-	}
-
-	private static GameRules.Key<DoubleRule> registerOrReuse(String name, GameRules.Type<DoubleRule> type) {
+        return null;
+    }	private static GameRules.Key<DoubleRule> registerOrReuse(String name, GameRules.Type<DoubleRule> type) {
 		if (GameRuleRegistry.hasRegistration(name)) {
 			GameRules.Key<DoubleRule> existing = findExisting(name);
 			GameRules.Type<?> existingType = GameRulesAccessor.getRuleTypes().get(existing);

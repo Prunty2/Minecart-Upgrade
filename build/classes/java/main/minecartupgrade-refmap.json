@@ -5,6 +5,9 @@
       "pushOtherMinecart": "Lnet/minecraft/class_1688;method_64274(Lnet/minecraft/class_1688;DD)V",
       "tick": "Lnet/minecraft/class_1688;method_5773()V"
     },
+    "com/minecartupgrade/mixin/DoubleRuleAccessor": {
+      "onChanged": "method_20778(Lnet/minecraft/server/MinecraftServer;)V"
+    },
     "com/minecartupgrade/mixin/GameRulesInstanceAccessor": {
       "rules": "field_9196:Ljava/util/Map;"
     },
@@ -33,6 +36,9 @@
         "comeOffTrack": "Lnet/minecraft/class_1688;method_7512(Lnet/minecraft/class_3218;)V",
         "pushOtherMinecart": "Lnet/minecraft/class_1688;method_64274(Lnet/minecraft/class_1688;DD)V",
         "tick": "Lnet/minecraft/class_1688;method_5773()V"
+      },
+      "com/minecartupgrade/mixin/DoubleRuleAccessor": {
+        "onChanged": "method_20778(Lnet/minecraft/server/MinecraftServer;)V"
       },
       "com/minecartupgrade/mixin/GameRulesInstanceAccessor": {
         "rules": "field_9196:Ljava/util/Map;"
