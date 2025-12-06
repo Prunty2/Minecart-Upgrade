@@ -1,0 +1,4 @@
+/gamerule minecartMaxSpeed 20
+/gamerule minecartMaxSpeed 18
+/gamerule minecartMaxSpeed 15
+/gamerule minecartMaxSpeed 18

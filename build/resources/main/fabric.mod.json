@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "minecartupgrade",
-	"version": "1.3.0",
+	"version": "1.2.2",
 	"name": "Minecart Upgrade",
 	"description": "Tweaks minecart physics, raising their maximum rail speed.",
 	"authors": [
@@ -30,7 +30,7 @@
 		}
 	],
 	"depends": {
-		"fabricloader": ">=0.16.9",
+		"fabricloader": ">=0.16.14",
 		"minecraft": ">=1.21.2 <=1.21.4",
 		"java": ">=21",
 		"fabric-api": "*"
