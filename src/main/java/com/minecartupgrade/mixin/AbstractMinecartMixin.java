@@ -2,16 +2,18 @@ package com.minecartupgrade.mixin;
 
 import com.minecartupgrade.FurnacePushTracker;
 import com.minecartupgrade.MinecartRerailHelper;
+import com.minecartupgrade.MinecartSpeedHelper;
 import com.minecartupgrade.RailDirectionTracker;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.vehicle.AbstractMinecart;
 import net.minecraft.world.entity.vehicle.MinecartFurnace;
+import net.minecraft.world.level.block.BaseRailBlock;
 import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(AbstractMinecart.class)
 public abstract class AbstractMinecartMixin implements FurnacePushTracker, RailDirectionTracker {
@@ -21,6 +23,13 @@ public abstract class AbstractMinecartMixin implements FurnacePushTracker, RailD
 	private int minecartupgrade$furnaceBoostTicks;
 	@Unique
 	private Vec3 minecartupgrade$lastRailDirection = Vec3.ZERO;
+
+	@Inject(method = "getMaxSpeed", at = @At("HEAD"), cancellable = true)
+	private void minecartupgrade$raiseMinecartSpeed(CallbackInfoReturnable<Double> cir) {
+		AbstractMinecart self = (AbstractMinecart)(Object)this;
+		boolean boostedByFurnace = this.minecartupgrade$isPushedByFurnace();
+		cir.setReturnValue(MinecartSpeedHelper.computeMaxSpeed(self, boostedByFurnace));
+	}
 
 	@Inject(method = "tick", at = @At("HEAD"))
 	private void minecartupgrade$decayFurnaceBoost(CallbackInfo ci) {
@@ -34,7 +43,8 @@ public abstract class AbstractMinecartMixin implements FurnacePushTracker, RailD
 		AbstractMinecart self = (AbstractMinecart)(Object)this;
 		Vec3 velocity = self.getDeltaMovement();
 		double speed = velocity.length();
-		if (self.isOnRails()) {
+		boolean onRails = minecartupgrade$isOnRails(self);
+		if (onRails) {
 			if (speed > 1.0E-4) {
 				this.minecartupgrade$lastRailDirection = velocity.normalize();
 			} else if (this.minecartupgrade$lastRailDirection.lengthSqr() > 0.0 && speed > 0.0) {
@@ -42,26 +52,32 @@ public abstract class AbstractMinecartMixin implements FurnacePushTracker, RailD
 			}
 		}
 
-		if (self.isOnRails() && speed > 1.0E-4 && this.minecartupgrade$lastRailDirection.lengthSqr() > 0.0) {
+		if (onRails && speed > 1.0E-4 && this.minecartupgrade$lastRailDirection.lengthSqr() > 0.0) {
 			if (this.minecartupgrade$lastRailDirection.dot(velocity) < -1.0E-4) {
 				self.setDeltaMovement(this.minecartupgrade$lastRailDirection.scale(speed));
 			}
 		}
 	}
 
-	@Inject(method = "pushOtherMinecart", at = @At("HEAD"))
-	private void minecartupgrade$recordFurnacePush(AbstractMinecart other, double d, double e, CallbackInfo ci) {
+	@Unique
+	private static boolean minecartupgrade$isOnRails(AbstractMinecart minecart) {
+		return BaseRailBlock.isRail(minecart.level().getBlockState(minecart.blockPosition()))
+			|| BaseRailBlock.isRail(minecart.level().getBlockState(minecart.blockPosition().below()));
+	}
+
+	@Inject(method = "push", at = @At("HEAD"))
+	private void minecartupgrade$recordFurnacePush(net.minecraft.world.entity.Entity entity, CallbackInfo ci) {
 		AbstractMinecart self = (AbstractMinecart)(Object)this;
-		if (other.isFurnace() && !self.isFurnace() && this.minecartupgrade$isPoweredFurnace(other)) {
-			this.minecartupgrade$markPushedByFurnace();
-		} else if (self.isFurnace() && !other.isFurnace() && this.minecartupgrade$isPoweredFurnace(self)) {
-			((FurnacePushTracker)other).minecartupgrade$markPushedByFurnace();
+		if (entity instanceof AbstractMinecart other) {
+			if (other instanceof MinecartFurnace furnace && !(self instanceof MinecartFurnace) && this.minecartupgrade$isPoweredFurnace(furnace)) {
+				this.minecartupgrade$markPushedByFurnace();
+			}
 		}
 	}
 
 	@Unique
 	private boolean minecartupgrade$isPoweredFurnace(AbstractMinecart cart) {
-		return cart instanceof MinecartFurnace furnace && furnace.push.lengthSqr() > 1.0E-7;
+		return cart instanceof MinecartFurnace furnace && furnace.xPush * furnace.xPush + furnace.zPush * furnace.zPush > 1.0E-7;
 	}
 
 	@Override
@@ -84,10 +100,11 @@ public abstract class AbstractMinecartMixin implements FurnacePushTracker, RailD
 		this.minecartupgrade$lastRailDirection = direction;
 	}
 
-	@Inject(method = "comeOffTrack", at = @At("HEAD"), cancellable = true)
-	private void minecartupgrade$keepOnRails(ServerLevel serverLevel, CallbackInfo ci) {
-		if (MinecartRerailHelper.rerailIfSafe((AbstractMinecart)(Object)this)) {
-			ci.cancel();
+	@Inject(method = "moveAlongTrack", at = @At("RETURN"))
+	private void minecartupgrade$rerailIfNeeded(CallbackInfo ci) {
+		AbstractMinecart self = (AbstractMinecart)(Object)this;
+		if (!self.level().isClientSide() && !minecartupgrade$isOnRails(self)) {
+			MinecartRerailHelper.rerailIfSafe(self);
 		}
 	}
 }

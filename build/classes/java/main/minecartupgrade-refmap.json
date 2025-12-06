@@ -1,8 +1,9 @@
 {
   "mappings": {
     "com/minecartupgrade/mixin/AbstractMinecartMixin": {
-      "comeOffTrack": "Lnet/minecraft/class_1688;method_7512(Lnet/minecraft/class_3218;)V",
-      "pushOtherMinecart": "Lnet/minecraft/class_1688;method_64274(Lnet/minecraft/class_1688;DD)V",
+      "getMaxSpeed": "Lnet/minecraft/class_1688;method_7504()D",
+      "moveAlongTrack": "Lnet/minecraft/class_1688;method_7513(Lnet/minecraft/class_2338;Lnet/minecraft/class_2680;)V",
+      "push": "Lnet/minecraft/class_1688;method_5697(Lnet/minecraft/class_1297;)V",
       "tick": "Lnet/minecraft/class_1688;method_5773()V"
     },
     "com/minecartupgrade/mixin/GameRulesInstanceAccessor": {
@@ -11,27 +12,16 @@
     "com/minecartupgrade/mixin/GameRulesMixin": {
       "<clinit>": "Lnet/minecraft/class_1928;<clinit>()V"
     },
-    "com/minecartupgrade/mixin/MinecartBehaviorAccessor": {
-      "minecart": "field_52520:Lnet/minecraft/class_1688;"
-    },
     "com/minecartupgrade/mixin/MinecartFurnaceMixin": {
-      "getMaxSpeed": "Lnet/minecraft/class_1696;method_7504(Lnet/minecraft/class_3218;)D"
-    },
-    "com/minecartupgrade/mixin/NewMinecartBehaviorMixin": {
-      "calculateSlopeSpeed": "Lnet/minecraft/class_9879;method_61603(Lnet/minecraft/class_243;Lnet/minecraft/class_2768;)Lnet/minecraft/class_243;",
-      "getMaxSpeed": "Lnet/minecraft/class_9879;method_61598(Lnet/minecraft/class_3218;)D"
-    },
-    "com/minecartupgrade/mixin/OldMinecartBehaviorMixin": {
-      "Lnet/minecraft/world/entity/vehicle/OldMinecartBehavior;getDeltaMovement()Lnet/minecraft/world/phys/Vec3;": "Lnet/minecraft/class_9883;method_61590()Lnet/minecraft/class_243;",
-      "getMaxSpeed": "Lnet/minecraft/class_9883;method_61598(Lnet/minecraft/class_3218;)D",
-      "moveAlongTrack": "Lnet/minecraft/class_9883;method_61589(Lnet/minecraft/class_3218;)V"
+      "getMaxSpeed": "Lnet/minecraft/class_1696;method_7504()D"
     }
   },
   "data": {
     "named:intermediary": {
       "com/minecartupgrade/mixin/AbstractMinecartMixin": {
-        "comeOffTrack": "Lnet/minecraft/class_1688;method_7512(Lnet/minecraft/class_3218;)V",
-        "pushOtherMinecart": "Lnet/minecraft/class_1688;method_64274(Lnet/minecraft/class_1688;DD)V",
+        "getMaxSpeed": "Lnet/minecraft/class_1688;method_7504()D",
+        "moveAlongTrack": "Lnet/minecraft/class_1688;method_7513(Lnet/minecraft/class_2338;Lnet/minecraft/class_2680;)V",
+        "push": "Lnet/minecraft/class_1688;method_5697(Lnet/minecraft/class_1297;)V",
         "tick": "Lnet/minecraft/class_1688;method_5773()V"
       },
       "com/minecartupgrade/mixin/GameRulesInstanceAccessor": {
@@ -40,20 +30,8 @@
       "com/minecartupgrade/mixin/GameRulesMixin": {
         "<clinit>": "Lnet/minecraft/class_1928;<clinit>()V"
       },
-      "com/minecartupgrade/mixin/MinecartBehaviorAccessor": {
-        "minecart": "field_52520:Lnet/minecraft/class_1688;"
-      },
       "com/minecartupgrade/mixin/MinecartFurnaceMixin": {
-        "getMaxSpeed": "Lnet/minecraft/class_1696;method_7504(Lnet/minecraft/class_3218;)D"
-      },
-      "com/minecartupgrade/mixin/NewMinecartBehaviorMixin": {
-        "calculateSlopeSpeed": "Lnet/minecraft/class_9879;method_61603(Lnet/minecraft/class_243;Lnet/minecraft/class_2768;)Lnet/minecraft/class_243;",
-        "getMaxSpeed": "Lnet/minecraft/class_9879;method_61598(Lnet/minecraft/class_3218;)D"
-      },
-      "com/minecartupgrade/mixin/OldMinecartBehaviorMixin": {
-        "Lnet/minecraft/world/entity/vehicle/OldMinecartBehavior;getDeltaMovement()Lnet/minecraft/world/phys/Vec3;": "Lnet/minecraft/class_9883;method_61590()Lnet/minecraft/class_243;",
-        "getMaxSpeed": "Lnet/minecraft/class_9883;method_61598(Lnet/minecraft/class_3218;)D",
-        "moveAlongTrack": "Lnet/minecraft/class_9883;method_61589(Lnet/minecraft/class_3218;)V"
+        "getMaxSpeed": "Lnet/minecraft/class_1696;method_7504()D"
       }
     }
   }

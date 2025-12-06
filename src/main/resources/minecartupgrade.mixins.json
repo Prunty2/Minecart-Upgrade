@@ -5,9 +5,6 @@
 	"refmap": "minecartupgrade-refmap.json",
 	"mixins": [
 		"AbstractMinecartMixin",
-		"OldMinecartBehaviorMixin",
-		"NewMinecartBehaviorMixin",
-		"MinecartBehaviorAccessor",
 		"MinecartFurnaceMixin",
 		"GameRulesMixin",
 		"GameRulesInstanceAccessor"
