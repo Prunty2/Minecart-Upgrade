@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.world.level.GameRules;
 
-	@Mixin(GameRules.class)
-	public abstract class GameRulesMixin {
+@Mixin(GameRules.class)
+public abstract class GameRulesMixin {
 	@Inject(method = "<clinit>", at = @At("TAIL"))
 	private static void minecartupgrade$registerGamerule(CallbackInfo ci) {
 		MinecartUpgradeGameRules.register();

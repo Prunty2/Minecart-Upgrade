@@ -79,7 +79,12 @@ public final class MinecartUpgradeConfigManager {
 			return;
 		}
 		if (rule != null && Math.abs(rule.get() - configured) > EPSILON) {
-			rule.set(configured, server);
+			// DoubleRule doesn't have a direct set(double, server) method.
+			// We need to use the validate method to set the value and then notify the server
+			if (rule.validate(String.valueOf(configured))) {
+				// The validate method sets the value internally, we just need to trigger the callback
+				MinecartSpeedHelper.updateConfiguredBlocksPerSecond(configured);
+			}
 		}
 	}
 

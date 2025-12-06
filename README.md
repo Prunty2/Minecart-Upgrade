@@ -2,7 +2,7 @@
 
 > **Transform your Minecraft rail systems into high-speed transit networks!**
 
-[![Minecraft](https://img.shields.io/badge/Minecraft-1.21.10-brightgreen)](https://www.minecraft.net/)
+[![Minecraft](https://img.shields.io/badge/Minecraft-1.21.2--1.21.4-brightgreen)](https://www.minecraft.net/)
 [![Fabric](https://img.shields.io/badge/Mod%20Loader-Fabric-blue)](https://fabricmc.net/)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
 [![Java](https://img.shields.io/badge/Java-21+-orange)](https://adoptium.net/)
